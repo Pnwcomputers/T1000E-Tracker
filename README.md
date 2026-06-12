@@ -10,7 +10,7 @@ A working reference for setting up a **SenseCAP T1000-E** as a private-but-publi
 
 | Component | Part | Notes |
 |---|---|---|
-| MCU | Nordic **nRF52840** | Not ESP32 — this matters for power config (see §6) |
+| MCU | Nordic **nRF52840** | Not ESP32; this matters for power config (see §6) |
 | LoRa radio | Semtech **LR1110** (863–928 MHz) | SX126x-family interop; cannot *receive* from legacy SX127x radios |
 | GNSS | MediaTek **AG3335** | GPS only in Meshtastic (no WiFi/BT indoor positioning) |
 | Battery | 700 mAh LiPo | Magnetic charging cable |
@@ -19,7 +19,7 @@ A working reference for setting up a **SenseCAP T1000-E** as a private-but-publi
 
 Two consequences worth internalizing up front, because they shape every decision below:
 
-- **No motion gating.** The accelerometer is on the board but unused by Meshtastic. The device cannot tell "moving" from "stationary" except by comparing GPS fixes. A clean "fast while moving / slow while idle" profile is therefore **not achievable** — you pick one cadence.
+- **No motion gating.** The accelerometer is on the board but unused by Meshtastic. The device cannot tell "moving" from "stationary" except by comparing GPS fixes. A clean "fast while moving / slow while idle" profile is therefore **not achievable**; you pick one cadence.
 - **nRF52, not ESP32.** Several power-module sleep timers are ESP32-only and do nothing here (see §6).
 
 ---
@@ -38,15 +38,15 @@ Two consequences worth internalizing up front, because they shape every decision
 
 ## 3. Radio / LoRa Config:
 
-This is the layer that decides **who can hear and relay you**. To be relayed by the broad public mesh while staying private, everything here must match the public mesh's radio settings — only the *key* differs.
+This is the layer that decides **who can hear and relay you**. To be relayed by the broad public mesh while staying private, everything here must match the public mesh's radio settings; only the *key* differs.
 
 | Setting | Value | Why |
 |---|---|---|
 | Region | `US` | Required; sets legal band |
 | Modem Preset | **Long Fast** | Must match the public mesh or no one relays you |
-| Frequency Slot | **20** | US915 LongFast public slot (906.875 MHz). Pinning this is the whole trick — see below |
+| Frequency Slot | **20** | US915 LongFast public slot (906.875 MHz). Pinning this is the whole trick; see below |
 | Hop Limit | `3` | Default. Do **not** raise it; higher hops worsen congestion |
-| Transmit Enabled | `On` | — |
+| Transmit Enabled | `On` |; |
 | Transmit Power | Max | Firmware clamps to legal/hardware ceiling; you want range for pickup |
 | Override Duty Cycle | `Off` | EU concern, not US |
 | Frequency Offset / Override Frequency | default / blank | The slot system handles frequency |
@@ -69,13 +69,13 @@ Three separate things people conflate:
 | Setting | Value | Why |
 |---|---|---|
 | OK to MQTT | **Off / false** | Requests public internet gateways not upload your packets to public MQTT/maps. Keeps the commute off public maps even while RF-relayed |
-| Ignore MQTT | default | — |
+| Ignore MQTT | default |; |
 
 ---
 
 ## 4. Channel & Privacy Config (PRIMARY Channel):
 
-Telemetry and position **only ride the PRIMARY channel** — so the private key must live on slot 0, not a secondary.
+Telemetry and position **only ride the PRIMARY channel**; so the private key must live on slot 0, not a secondary.
 
 | Setting | Value | Why |
 |---|---|---|
@@ -84,7 +84,7 @@ Telemetry and position **only ride the PRIMARY channel** — so the private key 
 | Name | `PNW_LoRa` | Name no longer drives frequency (slot pinned to 20), so keep your identity |
 | Location (position precision) | **Precise Location** | Private channel → you want exact bag coordinates, not the obfuscated tiers (those are for public channels) |
 | Uplink Enabled | `Off` | No public MQTT bridging |
-| Downlink Enabled | `Off` | — |
+| Downlink Enabled | `Off` |; |
 
 > Clone the channel to your receiver nodes via **Export → Import** (or QR) rather than retyping the key.
 
@@ -106,7 +106,7 @@ On the **nRF52** T1000-E, only **two** fields here do anything useful. The rest 
 | Field | Value | Why |
 |---|---|---|
 | **Enable power saving mode** | **On** | The real lever. In TRACKER role this also sleeps the LoRa radio between broadcasts → days of battery instead of ~1. Safe here because the T1000-E has a wake button |
-| **Shutdown on battery delay** | **0** | 0 = run on battery indefinitely (non-zero powers off after losing charge power — the opposite of what a tracker wants) |
+| **Shutdown on battery delay** | **0** | 0 = run on battery indefinitely (non-zero powers off after losing charge power; the opposite of what a tracker wants) |
 | Light Sleep Duration (`ls_secs`) | leave default | **ESP32-only, no effect on nRF52** |
 | Minimum Wake Time (`min_wake_secs`) | leave default | Tied to the same ESP32 light-sleep path; inert here |
 | Super Deep Sleep Duration (`sds_secs`) | leave default (`0`) | `0` = use default (~1 yr / button-wake), i.e. "stay off until I press the button." Correct for a tracker |
@@ -114,7 +114,7 @@ On the **nRF52** T1000-E, only **two** fields here do anything useful. The rest 
 | No-Connection BT Disabled (`wait_bluetooth_secs`) | default | Low impact on this device |
 | INA219 Address | ignore | For boards with an external INA-2XX monitor; T1000-E has none |
 
-> **Don't chase the SDS *duration* to control sleep behavior.** *When* it enters SDS is governed by the comms-timeout (~2 hr of no mesh contact), not this field. Practical effect: a bag left with zero mesh contact for hours can fall into near-off and won't resume until power-cycled — a non-issue on a regular commute, but the reason receiver coverage matters.
+> **Don't chase the SDS *duration* to control sleep behavior.** *When* it enters SDS is governed by the comms-timeout (~2 hr of no mesh contact), not this field. Practical effect: a bag left with zero mesh contact for hours can fall into near-off and won't resume until power-cycled; a non-issue on a regular commute, but the reason receiver coverage matters.
 
 ---
 
@@ -122,7 +122,7 @@ On the **nRF52** T1000-E, only **two** fields here do anything useful. The rest 
 
 Because there's no motion gating (§1), this collapses to **one cadence** + a charging strategy. Two profiles, depending on how you charge.
 
-### Profile A — Charge Nightly *(recommended for a bag that's home every night)*
+### Profile A; Charge Nightly *(recommended for a bag that's home every night)*
 
 Best tracking; battery is a non-issue since you top up the magnetic cable each evening.
 
@@ -137,7 +137,7 @@ meshtastic --set position.broadcast_smart_minimum_interval_secs 60
 
 Fix ~every minute, report every 1–2 min → a real breadcrumb trail of the commute.
 
-### Profile B — Weekend Charge, ~5-day Target Battery Life
+### Profile B; Weekend Charge, ~5-day Target Battery Life
 
 Charge Friday night, run Mon–Fri untouched. Single 5-min cadence (idle/moving can't be distinguished).
 
@@ -156,19 +156,19 @@ meshtastic --set position.broadcast_smart_minimum_interval_secs 300
 
 | Field | Meaning |
 |---|---|
-| `gps_update_interval` | How often the GPS powers on to fix. **The dominant power knob** (runs 24/7 — no motion gating to suppress it) |
+| `gps_update_interval` | How often the GPS powers on to fix. **The dominant power knob** (runs 24/7; no motion gating to suppress it) |
 | `position_broadcast_secs` | Guaranteed max interval between broadcasts (the "report at least this often" floor) |
 | `position_broadcast_smart_enabled` | Skip redundant broadcasts when not moving (saves airtime, not GPS power) |
 | `broadcast_smart_minimum_distance` | Meters moved before a smart broadcast is eligible |
 | `broadcast_smart_minimum_interval_secs` | Rate-limit / floor between smart broadcasts |
 
-> **Indoor battery tax:** sitting indoors at a desk, the GPS can't fix and stays powered hunting until timeout *every cycle*. This is the main thing that can drop Profile B below 5 days. Payoff is low indoors anyway (best it reports is the fix from walking in), so "near the office" is usually all you get — which is fine for "is it there / did it leave."
+> **Indoor battery tax:** sitting indoors at a desk, the GPS can't fix and stays powered hunting until timeout *every cycle*. This is the main thing that can drop Profile B below 5 days. Payoff is low indoors anyway (best it reports is the fix from walking in), so "near the office" is usually all you get; which is fine for "is it there / did it leave."
 
 > **Public-slot courtesy:** you're a guest on the congested metro slot 20. Keep the cadence in the few-minutes range; a 30-second beacon spams shared airtime and gets your packets deprioritized in relay.
 
 ---
 
-## 8. MQTT Module — OFF
+## 8. MQTT Module; OFF
 
 Separate from the channel uplink/OK-to-MQTT toggles. This is the master switch.
 
@@ -178,7 +178,7 @@ meshtastic --set mqtt.enabled false
 
 - Disabling the module also covers the **Map Reporting** sub-toggle (which would push you to the public map).
 - On the bag it's effectively a no-op (no IP path without a connected phone), but off is the clean resting state.
-- **Re-enable later only on a gateway node** pointed at *your own* broker if you build a private dashboard — never the default public broker.
+- **Re-enable later only on a gateway node** pointed at *your own* broker if you build a private dashboard; never the default public broker.
 
 ---
 
@@ -190,7 +190,7 @@ A battery tracker on a shared slot should transmit as little as possible. Enable
 |---|---|---|
 | **Telemetry** (device metrics) | **On**, 30–60 min interval | Read **battery level remotely** without pulling the bag out. Earns its airtime |
 | Ext Notif | *Optional* | Triggers the buzzer remotely → "ring my bag" locate. Costs nothing idle |
-| Range Test | *Temporary only* | Useful to probe commute coverage on a test drive, then **turn off** — it spams sequenced packets |
+| Range Test | *Temporary only* | Useful to probe commute coverage on a test drive, then **turn off**; it spams sequenced packets |
 | **Neighbor Info** | **Off** | Airtime-heavy, actively discouraged on dense public meshes. You already see link info per-packet (hop count + relay ID) |
 | Paxcounter | Off | Scans WiFi/BLE → wrecks battery |
 | Audio / Canned / Ambient Lighting / Serial / Detection Sensor | Off | Irrelevant to a tracker |
@@ -200,11 +200,11 @@ A battery tracker on a shared slot should transmit as little as possible. Enable
 
 ## 10. Receiver / Catch nodes:
 
-You only need nodes where you want guaranteed pickup — here: **downtown office** (high-value: dense relay zone) and **home (162nd)**. Each must be **Meshtastic** on the identical Region / Long Fast / **Slot 20** + the `PNW_LoRa` channel (name + PSK) to both hear and decode the bag.
+You only need nodes where you want guaranteed pickup; here: **downtown office** (high-value: dense relay zone) and **home (162nd)**. Each must be **Meshtastic** on the identical Region / Long Fast / **Slot 20** + the `PNW_LoRa` channel (name + PSK) to both hear and decode the bag.
 
 - Enable **Boosted RX Gain** on these.
 - Mains-powered, so cadence/power don't matter; Telemetry on is fine if you want their stats.
-- A `PNW_LoRa` Reticulum/raw-LoRa node will **not** work — must be Meshtastic on matching settings.
+- A `PNW_LoRa` Reticulum/raw-LoRa node will **not** work; must be Meshtastic on matching settings.
 
 ---
 
@@ -219,15 +219,15 @@ The T-Deck is just another node with a screen. Put it on the same mesh (Region U
   ```bash
   meshtastic --set position.fixed_position true --setlat 45.63 --setlon -122.55
   ```
-- **Offline map:** the MUI map screen renders from **map tiles on the SD card** (256×256 PNGs under `/map`). Pre-load tiles for the Portland/Vancouver corridor once (e.g. the `tdeck-maps` tool, zoom ~8–14) and the bag plots as a pin — no internet.
+- **Offline map:** the MUI map screen renders from **map tiles on the SD card** (256×256 PNGs under `/map`). Pre-load tiles for the Portland/Vancouver corridor once (e.g. the `tdeck-maps` tool, zoom ~8–14) and the bag plots as a pin; no internet.
 
 ### Easy alternative
 
-The phone Meshtastic app paired to any of your nodes has a full online Mesh Map — strictly easier, just not standalone.
+The phone Meshtastic app paired to any of your nodes has a full online Mesh Map; strictly easier, just not standalone.
 
 ---
 
-## Quick reference — consolidated CLI
+## Quick reference; consolidated CLI
 
 ```bash
 # --- Radio / LoRa (apply to bag AND receiver nodes) ---
@@ -271,7 +271,7 @@ meshtastic --set mqtt.enabled false
 - [ ] All devices report **~906.875 MHz** (slot 20 took)
 - [ ] Bag appears in a receiver node's node list (proves slot + preset + key align)
 - [ ] Bag gets a real GPS fix outdoors (coords populate, not blank)
-- [ ] Battery slope checked over the first work week (Mon vs Fri) — adjust `gps_update_interval` if it runs ahead of target
+- [ ] Battery slope checked over the first work week (Mon vs Fri); adjust `gps_update_interval` if it runs ahead of target
 - [ ] Traceroute on the bag occasionally shows an unknown relay node = public-mesh relay is working
 - [ ] Reminder: off-route (theft) = no coverage. This tracks known routes, not recovery.
 
