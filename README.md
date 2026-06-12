@@ -26,7 +26,7 @@ Two consequences worth internalizing up front, because they shape every decision
 
 ## 2. Flash / Update Firmware:
 
-1. Open the **Meshtastic Web Flasher** (Chrome/Edge).
+1. Open the [**Meshtastic Web Flasher**](https://flasher.meshtastic.org/) (Chrome/Edge).
 2. Select target: **Seeed Card Tracker T1000-E**.
 3. Enter DFU: hold the button and quickly connect the magnetic charge cable **twice** → a `T1000-E` USB drive appears.
 4. Flash the **erase** UF2 first; let the drive drop.
