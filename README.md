@@ -1,6 +1,6 @@
-# [SenseCAP T1000-E](https://www.seeedstudio.com/SenseCAP-Card-Tracker-T1000-E-for-Meshtastic-p-5913.html) ~ [Meshtastic](https://meshtastic.org/) GPS Tracker Setup
+# SenseCAP T1000-E ~ Meshtastic GPS Tracker Setup
 
-A working reference for setting up a **SenseCAP T1000-E** as a private-but-publicly-relayed asset tracker on a Meshtastic network. Written around a real deployment: tracking a **work bag** carried on a daily commute, riding an existing private network that sits on the public US915 frequency for maximum relay reach.
+A working reference for setting up a [**SenseCAP T1000-E**](https://www.seeedstudio.com/SenseCAP-Card-Tracker-T1000-E-for-Meshtastic-p-5913.html) as a private-but-publicly-relayed asset tracker on a [Meshtastic](https://meshtastic.org/) network. Written around a real deployment: tracking a **work bag** carried on a daily commute, riding an existing private network that sits on the public US915 frequency for maximum relay reach.
 
 > **Scope check before you build:** A Meshtastic tracker only reports while a node on the same preset/frequency can hear it (directly or via relay). It is **not** a cellular/Tile/AirTag-style recovery device. If the bag leaves all mesh coverage, it goes dark until it returns. This setup is for *known-route / known-location* tracking, not stolen-asset recovery anywhere. Because of this I have and use a [Tracki 4G GPS Tracker](https://tracki.com/) in addition to the T1000-E.
 
