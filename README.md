@@ -122,7 +122,7 @@ On the **nRF52** T1000-E, only **two** fields here do anything useful. The rest 
 
 Because there's no motion gating (§1), this collapses to **one cadence** + a charging strategy. Two profiles, depending on how you charge.
 
-### Profile A; Charge Nightly *(recommended for a bag that's home every night)*
+### Profile A; Charge Nightly *(Recommended for a device that can be charged every night)*
 
 Best tracking; battery is a non-issue since you top up the magnetic cable each evening.
 
@@ -137,7 +137,7 @@ meshtastic --set position.broadcast_smart_minimum_interval_secs 60
 
 Fix ~every minute, report every 1–2 min → a real breadcrumb trail of the commute.
 
-### Profile B; Weekend Charge, ~5-day Target Battery Life
+### Profile B; Weekend Charge, ~5-day Target Battery Life *(Charege a device weekly, over the weekend)*
 
 Charge Friday night, run Mon–Fri untouched. Single 5-min cadence (idle/moving can't be distinguished).
 
