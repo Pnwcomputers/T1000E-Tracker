@@ -56,11 +56,11 @@ This is the layer that decides **who can hear and relay you**. To be relayed by 
 
 Three separate things people conflate:
 
-- **Frequency slot** = the actual RF frequency. When left at `0/auto`, Meshtastic *hashes the primary channel name* to pick a slot. A custom primary name (like `PNW_LoRa`) therefore lands you on a **non-public frequency**, invisible to everyone else. **Pinning the slot to 20 overrides the name hash** and puts you on the public frequency regardless of channel name.
-- **Channel name + PSK** → hashed into the 1-byte **channel hash** in each packet header, which tells a receiver *which key to try*. Public LongFast (`LongFast` + `AQ==`) hashes differently than your `PNW_LoRa` + private key.
+- **Frequency slot** = the actual RF frequency. When left at `0/auto`, Meshtastic *hashes the primary channel name* to pick a slot. A custom primary name (like `LoRa_Name`) therefore lands you on a **non-public frequency**, invisible to everyone else. **Pinning the slot to 20 overrides the name hash** and puts you on the public frequency regardless of channel name.
+- **Channel name + PSK** → hashed into the 1-byte **channel hash** in each packet header, which tells a receiver *which key to try*. Public LongFast (`LongFast` + `AQ==`) hashes differently than your `LoRa_Name` + private key.
 - **Relay does not require the key.** Nodes rebroadcast any packet sharing their modem settings (preset + slot), *regardless of whether they can decrypt it*. So public nodes on slot 20 relay your encrypted bag packets; only your nodes decode them.
 
-**Net result:** keep your network name (`PNW_LoRa`), keep your private PSK, just pin **slot 20** + **Long Fast** preset. Your existing private network now rides the public mesh.
+**Net result:** keep your network name (`LoRa_Name`), keep your private PSK, just pin **slot 20** + **Long Fast** preset. Your existing private network now rides the public mesh.
 
 > **Sanity check:** after applying, confirm all devices (bag + receivers) show the same frequency (~**906.875 MHz**). A mismatch means the slot didn't take and they won't hear each other regardless of keys.
 
@@ -80,8 +80,8 @@ Telemetry and position **only ride the PRIMARY channel**; so the private key mus
 | Setting | Value | Why |
 |---|---|---|
 | Role | **PRIMARY** | Position/telemetry only broadcast on primary |
-| PSK | **256-bit, your `PNW_LoRa` key** | Keep your existing key so receivers still decode. Don't regenerate unless you re-clone to all nodes |
-| Name | `PNW_LoRa` | Name no longer drives frequency (slot pinned to 20), so keep your identity |
+| PSK | **256-bit, your `LoRa_Name` key** | Keep your existing key so receivers still decode. Don't regenerate unless you re-clone to all nodes |
+| Name | `LoRa_Name` | Name no longer drives frequency (slot pinned to 20), so keep your identity |
 | Location (position precision) | **Precise Location** | Private channel → you want exact bag coordinates, not the obfuscated tiers (those are for public channels) |
 | Uplink Enabled | `Off` | No public MQTT bridging |
 | Downlink Enabled | `Off` |; |
@@ -200,11 +200,11 @@ A battery tracker on a shared slot should transmit as little as possible. Enable
 
 ## 10. Receiver / Catch nodes:
 
-You only need nodes where you want guaranteed pickup; here: **downtown office** (high-value: dense relay zone) and **home (162nd)**. Each must be **Meshtastic** on the identical Region / Long Fast / **Slot 20** + the `PNW_LoRa` channel (name + PSK) to both hear and decode the bag.
+You only need nodes where you want guaranteed pickup; here: **downtown office** (high-value: dense relay zone) and **home (162nd)**. Each must be **Meshtastic** on the identical Region / Long Fast / **Slot 20** + the `_LoRa` channel (name + PSK) to both hear and decode the bag.
 
 - Enable **Boosted RX Gain** on these.
 - Mains-powered, so cadence/power don't matter; Telemetry on is fine if you want their stats.
-- A `PNW_LoRa` Reticulum/raw-LoRa node will **not** work; must be Meshtastic on matching settings.
+- A Reticulum/raw-LoRa node will **not** work; must be Meshtastic on matching settings.
 
 ---
 
@@ -212,7 +212,7 @@ You only need nodes where you want guaranteed pickup; here: **downtown office** 
 
 ### On a LilyGO T-Deck (standalone, no phone)
 
-The T-Deck is just another node with a screen. Put it on the same mesh (Region US / Long Fast / Slot 20 + import `PNW_LoRa` channel via QR/URL), then:
+The T-Deck is just another node with a screen. Put it on the same mesh (Region US / Long Fast / Slot 20 + import `LoRa_Name` channel via QR/URL), then:
 
 - **Nodes list** → the bag shows last position, distance, last-heard, battery. Tap for detail → exact coords, **Request Position** (force a fresh fix), **Traceroute** (see the relay path / whether a stranger's node carried it).
 - **Own location:** T-Deck **Plus** has GPS and self-locates (live distance/bearing). **Base** T-Deck has no GPS → set a fixed position; distance readouts are only meaningful while you're at that point.
@@ -277,4 +277,4 @@ meshtastic --set mqtt.enabled false
 
 ---
 
-*Environment for this build: `PNW_LoRa` Meshtastic network, US915 slot 20 (public), private 256-bit PSK; work-bag use, ~M–F 11:00–18:00, home (162nd Ave) ↔ downtown office; receiver nodes at home + office; viewer: T-Deck and/or phone app.*
+*Environment for this build: `LoRa_Name` Meshtastic network, US915 slot 20 (public), private 256-bit PSK; work-bag use, ~M–F 11:00–18:00, home (162nd Ave) ↔ downtown office; receiver nodes at home + office; viewer: T-Deck and/or phone app.*
